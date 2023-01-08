@@ -1,0 +1,151 @@
+##########################################################################################
+#Accounts & Environment Variables
+##########################################################################################
+
+#check if .var file is present.
+varFileCheck(){
+    local fileCheck=0
+
+    while [[ $fileCheck = 0 ]]
+    do
+        if [[ -f .var ]]
+        then
+            source .var
+            fileCheck=1
+        else
+            echo -e "\e[33mWARNING: the .var file is missing. Please create it.\e[0m"
+            fileCheck=0
+            sleep 5
+        fi
+    done
+}
+
+#check if .az_cred file is present
+userCredentialFileCheck(){
+    local fileCheck=0
+
+    while [[ $fileCheck = 0 ]]
+    do
+        if [[ -f .az_cred ]]
+        then
+            source .az_cred
+            fileCheck=1
+        else
+            echo -e "\e[33mWARNING: the .az_cred file is missing. Please create it.\e[0m"
+            fileCheck=0
+            sleep 5
+        fi
+    done    
+}
+
+loginUser(){
+#login to Azure using AZ CLI
+    varFileCheck
+    
+    userCredentialFileCheck
+
+    az login \
+        --username $az_username \
+        --password $az_password \
+        --output none
+    
+    if [[ $? -ne 0 ]]
+    then
+        echo "\e[31mERROR: Azure login with User failed\e[0m"
+        exit 1
+    else
+        #make sure you use the right subscription
+        az account set \
+            --subscription $subscription
+        echo -e "timestamp: $(timeStamp) - \e[34mLogged in to Azure as user\e[0m"
+    fi
+}
+
+##########################################################################################
+#Create Resource Groups & Accounts
+##########################################################################################
+provisioning(){
+
+    while getopts 'u:' OPTION; 
+    do
+        case "$OPTION" in
+            u)
+            userCount=$OPTARG
+            ;;
+            ?)
+            echo "usage: $(basename \$0) [-u desired amount of users]" >&2
+            exit 1
+            ;;
+        esac
+    done
+
+    local subscriptionID=$(az account show --query id --output tsv)
+
+    echo "userCount=\"$userCount\"" > userCount
+
+    for i in $(seq 1 $userCount)
+    do
+        az group create \
+            --name rg_$prefix$i \
+            --location $location \
+            --output none
+
+        userID=$(
+            az ad user create \
+            --display-name $prefix$i \
+            --password HeelVeilig$i \
+            --user-principal-name $prefix$i@atcomputing.net \
+            --force-change-password-next-sign-in false \
+            --query id \
+            --output tsv
+        )
+        
+        #write userID into file
+        echo "userID$i=\"$userID\"" >> accounts
+        echo "userPrincipalName$i=\"$prefix$i@atcomputing.net\"" >> accounts
+
+        source accounts
+
+        #set strict persmissions for every user
+        az role assignment create \
+            --role "Contributor" \
+            --assignee "$userPrincipalName$i" \
+            --scope /subscriptions/$subscriptionID/resourceGroups/rg_$prefix$i \
+            --output none
+
+        echo -e "timestamp: $(timeStamp) - \e[34mCreated resource group and account for $userPincipalName$i\e[0m"
+    done
+}
+
+##########################################################################################
+#Timestamping
+##########################################################################################
+
+timeStamp(){
+    date +%H:%M:%S
+}
+
+##########################################################################################
+#Cleanup
+##########################################################################################
+
+deleteUsersAndGroups(){
+    source userCount
+    source accounts
+    source .var
+
+    for i in $(seq 1 $userCount)
+    do
+        az group delete \
+        --name rg_$prefix$i \
+        --no-wait \
+        --yes \
+        --output none
+    
+        az ad user delete \
+        --id $userID$i \
+        --output none
+    done
+
+    echo -e "timestamp: $(timeStamp) - \e[34mDeleted resource groups and user accounts\e[0m"
+}
