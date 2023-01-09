@@ -13,7 +13,7 @@ varFileCheck(){
             source .var
             fileCheck=1
         else
-            echo -e "\e[33mWARNING: the .var file is missing. Please create it.\e[0m"
+            printf "\r \e[33mWARNING: the .var file is missing. Please create it.\e[0m \n"
             fileCheck=0
             sleep 5
         fi
@@ -31,7 +31,7 @@ userCredentialFileCheck(){
             source .az_cred
             fileCheck=1
         else
-            echo -e "\e[33mWARNING: the .az_cred file is missing. Please create it.\e[0m"
+            printf "\r \e[33mWARNING: the .az_cred file is missing. Please create it.\e[0m \n"
             fileCheck=0
             sleep 5
         fi
@@ -51,13 +51,13 @@ loginUser(){
     
     if [[ $? -ne 0 ]]
     then
-        echo "\e[31mERROR: Azure login with User failed\e[0m"
+        printf "\r \e[31mERROR: Azure login with User failed\e[0m \n"
         exit 1
     else
         #make sure you use the right subscription
         az account set \
             --subscription $subscription
-        echo -e "timestamp: $(timeStamp) - \e[34mLogged in to Azure as user\e[0m"
+        printf "\r timestamp: $(timeStamp) - \e[34mLogged in to Azure as user\e[0m \n"
     fi
 }
 
@@ -73,7 +73,7 @@ provisioning(){
             userCount=$OPTARG
             ;;
             ?)
-            echo "usage: $(basename \$0) [-u desired amount of users]" >&2
+            printf "\r usage: $(basename \$0) [-u] desired amount of users] \n" >&2
             exit 1
             ;;
         esac
@@ -81,7 +81,7 @@ provisioning(){
 
     local subscriptionID=$(az account show --query id --output tsv)
 
-    echo "userCount=\"$userCount\"" > userCount
+    printf "userCount=\"$userCount\" \n" > userCount
 
     for i in $(seq 1 $userCount)
     do
@@ -90,30 +90,27 @@ provisioning(){
             --location $location \
             --output none
 
-        userID=$(
+        local userID=$(
             az ad user create \
-            --display-name $prefix$i \
-            --password HeelVeilig$i \
-            --user-principal-name $prefix$i@atcomputing.net \
+            --display-name "$prefix$i" \
+            --password "HeelVeilig$i" \
+            --user-principal-name "$prefix$i@atcomputing.net" \
             --force-change-password-next-sign-in false \
             --query id \
             --output tsv
         )
         
         #write userID into file
-        echo "userID$i=\"$userID\"" >> accounts
-        echo "userPrincipalName$i=\"$prefix$i@atcomputing.net\"" >> accounts
-
-        source accounts
+        printf "$userID \n" >> accounts
 
         #set strict persmissions for every user
         az role assignment create \
             --role "Contributor" \
-            --assignee "$userPrincipalName$i" \
+            --assignee $userID \
             --scope /subscriptions/$subscriptionID/resourceGroups/rg_$prefix$i \
             --output none
 
-        echo -e "timestamp: $(timeStamp) - \e[34mCreated resource group and account for $userPincipalName$i\e[0m"
+        printf "\r timestamp: $(timeStamp) - \e[34mCreated resource group and account for $prefix$i@atcomputing.net\e[0m \n"
     done
 }
 
@@ -130,22 +127,24 @@ timeStamp(){
 ##########################################################################################
 
 deleteUsersAndGroups(){
+    
     source userCount
-    source accounts
     source .var
+
+    readarray -t userIdArray < accounts
 
     for i in $(seq 1 $userCount)
     do
         az group delete \
-        --name rg_$prefix$i \
+        --name "rg_$prefix$i" \
         --no-wait \
         --yes \
         --output none
     
         az ad user delete \
-        --id $userID$i \
+        --id ${userIdArray[$(expr $i - 1)]} \
         --output none
     done
 
-    echo -e "timestamp: $(timeStamp) - \e[34mDeleted resource groups and user accounts\e[0m"
+    printf "\r timestamp: $(timeStamp) - \e[34mDeleted resource groups and user accounts\e[0m \n"
 }

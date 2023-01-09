@@ -8,4 +8,4 @@ loginUser
 deleteUsersAndGroups
 
 #remove local files
-rm accounts userCount
+#rm accounts userCount
