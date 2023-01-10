@@ -2,7 +2,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/Strobodov/workshop_linux_server?logo=github)
 ![GitHub License](https://img.shields.io/github/license/Strobodov/workshop_linux_server)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Strobodov/workshop_linux_server?logo=github)
-![GitHub top language](https://img.shields.io/github/languages/top/Strobodov/Azure_Pipeline?logo=github)
+![GitHub top language](https://img.shields.io/github/languages/top/Strobodov/workshop_linux_server?logo=github)
 
 # workshop_linux_server
 
