@@ -100,6 +100,10 @@ provisioning(){
             --output tsv
         )
         
+        printf "\r username = $prefix$i@atcomputing.net \n" >> azure_accounts
+        printf "\r password = HeelVeilig$i \n" >> azure_accounts
+        printf "\r resource group = rg_$prefix$i \n" >> azure_accounts
+
         #write userID into file
         printf "$userID \n" >> accounts
 
@@ -145,6 +149,8 @@ deleteUsersAndGroups(){
         --id ${userIdArray[$(expr $i - 1)]} \
         --output none
     done
+
+    rm userCount accounts
 
     printf "\r timestamp: $(timeStamp) - \e[34mDeleted resource groups and user accounts\e[0m \n"
 }
