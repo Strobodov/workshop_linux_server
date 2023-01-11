@@ -35,3 +35,5 @@ subscription="<the Azure subscription you want to use>"
 prefix="<a prefix to use for all accounts and resources created (and deleted) with the scripts>"
 mydomain="<the domain you want to use for the created Azure accounts. E.g. atcomputing.nl">
 ```
+
+By default, all file names that start with `.` should be ignored by git. This prevents your Azure credentials accidentally being pusht to GitHub or some other public git repo. If you have doubts, you can add these files to `.gitignore`. See https://git-scm.com/docs/gitignore for more information on this.
