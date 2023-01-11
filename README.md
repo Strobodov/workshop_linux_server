@@ -36,4 +36,4 @@ prefix="<a prefix to use for all accounts and resources created (and deleted) wi
 mydomain="<the domain you want to use for the created Azure accounts. E.g. atcomputing.nl">
 ```
 
-By default, all file names that start with `.` should be ignored by git. This prevents your Azure credentials accidentally being pusht to GitHub or some other public git repo. If you have doubts, you can add these files to `.gitignore`. See https://git-scm.com/docs/gitignore for more information on this.
+To prevent `git` from syncing your Azure credentials or environment variables to a public repo, `.var` and `.az_cred` should be ignored and are therefore added to `.gitignore`. See https://git-scm.com/docs/gitignore for more information on this.
