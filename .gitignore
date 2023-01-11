@@ -1,2 +1,5 @@
 .az_cred
 .var
+accounts
+azure_accounts
+userCount
