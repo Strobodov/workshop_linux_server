@@ -36,4 +36,6 @@ prefix="<a prefix to use for all accounts and resources created (and deleted) wi
 mydomain="<the domain you want to use for the created Azure accounts. E.g. atcomputing.nl">
 ```
 
-To prevent `git` from syncing your Azure credentials or environment variables to a public repo, `.var` and `.az_cred` should be ignored and are therefore added to `.gitignore`. See https://git-scm.com/docs/gitignore for more information on this.
+To prevent `git` from syncing your Azure credentials or environment variables to a public repo, `.var` and `.az_cred` should be ignored and are therefore added to `.gitignore`. Also, the files created by the `az_provisioning.sh` script are added to `.gitignore` just to make sure they are not added tot the index.
+
+See https://git-scm.com/docs/gitignore for more information on this.
