@@ -10,3 +10,27 @@ Prerequisites:
 - Azure account
 - Azure CLI installed (https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
 - some Linux distribution to run commands and scripts
+
+
+## getting started
+
+This workshop will provision a Ubuntu 22.04 VM in Microsoft Azure. All required steps and commands can be found in the `Workshop_Linux_Server_101.odp` presentation. As mentioned above, you will need an account for Microsoft Azure.
+
+To provision multiple accounts and resource groups in Azure for demo or training pursposes, the `azure_provisioning.sh` script can be used. This is not required to follow the workshop steps in the LibreOffice presentation. As the name suggests, with`cleanup.sh` everything can be removed from Azure again. The `functions` file is sourced by the scripts for use. You do not need this file directly, but of course you are free to use it any way you like.
+
+The `azure_provisioning.sh` script requires 2 files to be present: `.az_cred` and `.var` which provides all required environment variables for the scripts.
+
+The `.az_cred` file should contain:
+
+```
+az_username="<your Azure username>"
+az_password="<your Azure password>"
+```
+
+The `.var` file should contain:
+
+```
+location="<Azure location you want the resources to be deployed. E.g. westeurope">
+subscription="<the Azure subscription you want to use>"
+prefix="<a prefix to use for all accounts and resources created (and deleted) with the scripts>"
+```
