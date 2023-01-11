@@ -93,15 +93,15 @@ provisioning(){
         local userID=$(
             az ad user create \
             --display-name "$prefix$i" \
-            --password "HeelVeilig$i" \
-            --user-principal-name "$prefix$i@atcomputing.net" \
+            --password "VerySafe$i" \
+            --user-principal-name "$prefix$i$mydomain" \
             --force-change-password-next-sign-in false \
             --query id \
             --output tsv
         )
         
-        printf "\r username = $prefix$i@atcomputing.net \n" >> azure_accounts
-        printf "\r password = HeelVeilig$i \n" >> azure_accounts
+        printf "\r username = $prefix$i$mydomain \n" >> azure_accounts
+        printf "\r password = VerySafe$i \n" >> azure_accounts
         printf "\r resource group = rg_$prefix$i \n" >> azure_accounts
 
         #write userID into file
@@ -114,7 +114,7 @@ provisioning(){
             --scope /subscriptions/$subscriptionID/resourceGroups/rg_$prefix$i \
             --output none
 
-        printf "\r timestamp: $(timeStamp) - \e[34mCreated resource group and account for $prefix$i@atcomputing.net\e[0m \n"
+        printf "\r timestamp: $(timeStamp) - \e[34mCreated resource group and account for $prefix$i$mydomain\e[0m \n"
     done
 }
 
