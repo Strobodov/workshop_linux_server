@@ -6,6 +6,3 @@ loginUser
 
 #clean up Azure resources (Azure AD Users and Resource Groups)
 deleteUsersAndGroups
-
-#remove local files
-#rm accounts userCount
