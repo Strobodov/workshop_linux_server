@@ -33,4 +33,5 @@ The `.var` file should contain:
 location="<Azure location you want the resources to be deployed. E.g. westeurope">
 subscription="<the Azure subscription you want to use>"
 prefix="<a prefix to use for all accounts and resources created (and deleted) with the scripts>"
+mydomain="<the domain you want to use for the created Azure accounts. E.g. atcomputing.nl">
 ```
