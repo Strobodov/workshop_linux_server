@@ -4,7 +4,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Strobodov/workshop_linux_server)
 ![GitHub top language](https://img.shields.io/github/languages/top/Strobodov/workshop_linux_server)
 
-# workshop_linux_server
+# Workshop Linux Web Server 101
 
 Prerequisites:
 - Azure account
